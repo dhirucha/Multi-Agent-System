@@ -1,50 +1,98 @@
-# AgentMind — Multi-Agent AI Research UI
+# AgentMind
 
-A premium, dark-theme Streamlit dashboard for your multi-agent research pipeline.
-
----
-
-## Folder Structure
-
-```
-MULTI-AGENT SYSTEM/
-├── app.py            ← NEW: main Streamlit app (this file)
-├── styles.py         ← NEW: all CSS (imported by app.py)
-├── pipeline.py       ← existing (unchanged)
-├── agents.py         ← existing (unchanged)
-├── tools.py          ← existing (unchanged)
-├── .env              ← existing (unchanged)
-├── requirements.txt  ← updated (add streamlit, plotly, pandas)
-└── .venv/
-```
+**Multi-Agent AI Research UI** — a premium, dark-theme Streamlit dashboard for orchestrating and visualizing a multi-agent research pipeline.
 
 ---
 
-## Setup
+## Overview
+
+AgentMind wraps an existing multi-agent research pipeline (Search → Scrape → Report → Critic) in a polished Streamlit interface, giving you real-time pipeline visibility, run history, and per-agent configuration without touching the underlying pipeline code.
+
+---
+
+## Table of Contents
+
+- [Project Structure](#project-structure)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Pipeline Integration](#pipeline-integration)
+- [Application Pages](#application-pages)
+- [Demo Mode](#demo-mode)
+- [Customization](#customization)
+- [License](#license)
+
+---
+
+## Project Structure
+
+```
+agentmind/
+├── app.py               # Main Streamlit application entry point
+├── styles.py             # Centralized CSS/theme definitions
+├── pipeline.py            # Multi-agent pipeline orchestration (unchanged)
+├── agents.py              # Agent definitions and roles (unchanged)
+├── tools.py               # Shared tool utilities (unchanged)
+├── requirements.txt       # Python dependencies
+├── .env                   # Environment variables (not committed)
+└── .venv/                 # Virtual environment (not committed)
+```
+
+---
+
+## Requirements
+
+- Python 3.9+
+- An existing `pipeline.py` exposing `run_research_pipeline(topic: str) -> dict`
+- API keys for your configured LLM/search providers (set via `.env`)
+
+---
+
+## Installation
 
 ```bash
-# Activate your venv
-source .venv/bin/activate   # Linux / Mac
-.venv\Scripts\activate      # Windows
+# Clone the repository
+git clone https://github.com/<your-username>/agentmind.git
+cd agentmind
 
-# Install new UI deps
-pip install streamlit plotly pandas
+# Create and activate a virtual environment
+python -m venv .venv
+source .venv/bin/activate      # macOS / Linux
+.venv\Scripts\activate         # Windows
 
-# Run the app
+# Install dependencies
+pip install -r requirements.txt
+```
+
+**New UI dependencies** (add to `requirements.txt` if not already present):
+
+```
+streamlit
+plotly
+pandas
+```
+
+---
+
+## Usage
+
+```bash
 streamlit run app.py
 ```
 
+The app will be available at `http://localhost:8501` by default.
+
 ---
 
-## Integration
+## Pipeline Integration
 
-The `app.py` imports your pipeline directly:
+`app.py` imports the pipeline directly — no adapter or wrapper layer required:
 
 ```python
 from pipeline import run_research_pipeline
 ```
 
-This is already wired. Your `run_research_pipeline(topic)` must return a dict:
+`run_research_pipeline(topic: str)` must return a dictionary with the following shape:
 
 ```python
 {
@@ -55,40 +103,48 @@ This is already wired. Your `run_research_pipeline(topic)` must return a dict:
 }
 ```
 
-That matches your existing `run_research_pipeline` exactly — no changes needed.
+This matches the existing `run_research_pipeline` implementation exactly — no changes to `pipeline.py`, `agents.py`, or `tools.py` are required.
 
 ---
 
-## Pages
+## Application Pages
 
-| Page | What it does |
-|------|-------------|
-| **Dashboard** | Hero, metrics, topic input, agent pipeline view, live logs, result tabs |
-| **Research History** | All past runs with status |
-| **Agents** | Detailed view of each agent's role and capabilities |
-| **Settings** | LLM provider, model, temperature, search config |
+| Page | Description |
+|---|---|
+| **Dashboard** | Hero section, run metrics, topic input, live agent pipeline visualization, execution logs, and tabbed results view |
+| **Research History** | Chronological log of all past runs with status and outcome |
+| **Agents** | Reference view of each agent's role, responsibilities, and capabilities |
+| **Settings** | Configuration for LLM provider, model selection, temperature, and search parameters |
 
 ---
 
-## Demo / Dev Mode
+## Demo Mode
 
-To run without calling the real pipeline (for UI demos), swap this line in `app.py`:
+To preview the UI without invoking the live pipeline (useful for demos or frontend-only development), swap the import in `app.py`:
 
 ```python
-# Real mode (default)
+# Live mode (default)
 from pipeline import run_research_pipeline
 
-# Demo mode — comment above, uncomment below
+# Demo mode — comment out the import above and uncomment below
 # run_research_pipeline = None
 ```
 
-Then remove the `result = run_research_pipeline(topic)` call and inject mock data.
+Then remove the `result = run_research_pipeline(topic)` call and substitute mock/sample data of the same shape described in [Pipeline Integration](#pipeline-integration).
 
 ---
 
-## Customisation
+## Customization
 
-- **Colors** — edit CSS variables in `styles.py` (`:root` block)
-- **Fonts** — change the Google Fonts import in `styles.py`
-- **Agent names** — update `agents_meta` list in `app.py`
-- **Example chips** — edit `example_topics` list in `app.py`
+| What | Where |
+|---|---|
+| Color palette | CSS custom properties in the `:root` block of `styles.py` |
+| Typography | Google Fonts import in `styles.py` |
+| Agent metadata | `agents_meta` list in `app.py` |
+| Example topic chips | `example_topics` list in `app.py` |
+
+---
+
+## License
+
+Specify a license (e.g., MIT) here.
